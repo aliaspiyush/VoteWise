@@ -6,7 +6,9 @@
   "scripts": {
     "start": "node src/index.js",
     "dev": "node --watch src/index.js",
-    "build": "echo built"
+    "build": "echo built",
+    "test": "node --test tests/health.test.js tests/session.test.js tests/gemini.routes.test.js tests/integration.test.js",
+    "test:watch": "node --test --watch tests/"
   },
   "dependencies": {
     "@google/generative-ai": "^0.24.1",
