@@ -1,4 +1,9 @@
-const BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3001';
+const BASE_URL = import.meta.env.VITE_API_BASE_URL || '';
+
+// Generates a simple client-side session ID when backend is unavailable
+function generateSessionId(): string {
+  return 'local_' + Math.random().toString(36).substring(2, 11) + '_' + Date.now();
+}
 
 // ── Session API ───────────────────────────────────────────────────────────────
 export async function createSession(data: {
@@ -6,12 +11,30 @@ export async function createSession(data: {
   isFirstTime: boolean;
   confusionTopic: string;
 }) {
-  const res = await fetch(`${BASE_URL}/api/session/create`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(data),
-  });
-  return res.json();
+  // If no backend URL is configured, fall back to a local session
+  if (!BASE_URL) {
+    const sessionId = generateSessionId();
+    const session = { sessionId, ...data };
+    localStorage.setItem('votewise_session', JSON.stringify(session));
+    return { sessionId };
+  }
+
+  try {
+    const res = await fetch(`${BASE_URL}/api/session/create`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data),
+    });
+    if (!res.ok) throw new Error(`Backend error: ${res.status}`);
+    return res.json();
+  } catch (err) {
+    // Backend unreachable — fall back to local session so the app still works
+    console.warn('[VoteWise] Backend unavailable, using local session fallback.', err);
+    const sessionId = generateSessionId();
+    const session = { sessionId, ...data };
+    localStorage.setItem('votewise_session', JSON.stringify(session));
+    return { sessionId };
+  }
 }
 
 // ── Timeline API ──────────────────────────────────────────────────────────────
