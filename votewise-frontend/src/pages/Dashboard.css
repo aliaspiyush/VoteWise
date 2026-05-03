@@ -1,0 +1,136 @@
+/* ── Dashboard ───────────────────────────────────────────────── */
+.dashboard {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  background: var(--bg);
+}
+
+/* ── Mobile tab bar ──────────────────────────────────────────── */
+.mobile-tabs {
+  display: none;
+  align-items: center;
+  gap: var(--s2);
+  padding: var(--s3) var(--s4);
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  overflow-x: auto;
+}
+
+.tab-btn {
+  flex-shrink: 0;
+  padding: 0.35rem 0.875rem;
+  border-radius: var(--r-sm);
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: var(--text-muted);
+  background: transparent;
+  border: 1px solid transparent;
+  transition: all var(--t-fast);
+  letter-spacing: -0.01em;
+}
+.tab-btn.active {
+  background: var(--surface-2);
+  border-color: var(--border-strong);
+  color: var(--text);
+}
+
+/* ── Desktop split layout ────────────────────────────────────── */
+.dashboard-layout {
+  flex: 1;
+  display: grid;
+  /* fixed sidebar | flexible main */
+  grid-template-columns: 380px 1fr;
+  gap: var(--s4);
+  padding: var(--s4);
+  /* don't exceed page max */
+  max-width: var(--page-max);
+  width: 100%;
+  margin: 0 auto;
+  align-items: start;
+  /* prevent horizontal overflow */
+  box-sizing: border-box;
+}
+
+/* Left column — sticky timeline */
+.timeline-col {
+  /* sticky inside the scroll page */
+  position: sticky;
+  top: calc(var(--header-h) + var(--s4));
+  max-height: calc(100dvh - var(--header-h) - var(--s8));
+  overflow-y: auto;
+}
+
+/* Right column — grows to fill */
+.right-col {
+  min-width: 0; /* prevents grid blowout */
+  display: flex;
+  flex-direction: column;
+  gap: var(--s4);
+}
+
+/* Tab selector inside right col (desktop) */
+.right-tab-row {
+  display: flex;
+  border: 1px solid var(--border);
+  border-radius: var(--r-md);
+  overflow: hidden;
+  background: var(--border);
+  gap: 1px;
+  flex-shrink: 0;
+}
+
+.right-tab {
+  flex: 1;
+  padding: 0.5rem var(--s4);
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: var(--text-muted);
+  background: var(--surface);
+  transition: all var(--t-fast);
+  letter-spacing: -0.01em;
+  text-align: center;
+}
+.right-tab:hover { background: var(--surface-2); color: var(--text-muted); }
+.right-tab.active { background: var(--surface-2); color: var(--text); }
+
+/* Panel that grows to fill right col space */
+.right-panel-body {
+  flex: 1;
+  min-height: 0;
+  position: relative;
+}
+
+/* Always-mounted panels — toggled with CSS not unmounting */
+.panel-slot {
+  width: 100%;
+}
+.panel-hidden {
+  display: none !important;
+}
+.panel-visible {
+  display: block;
+}
+
+
+/* ── Responsive ──────────────────────────────────────────────── */
+@media (max-width: 960px) {
+  .dashboard-layout { grid-template-columns: 320px 1fr; }
+}
+
+@media (max-width: 768px) {
+  .mobile-tabs { display: flex; }
+  .dashboard-layout {
+    grid-template-columns: 1fr;
+    padding: var(--s3);
+    gap: var(--s3);
+  }
+  .timeline-col {
+    position: static;
+    max-height: none;
+    overflow-y: visible;
+  }
+  .right-tab-row { display: none; }
+  /* controlled by mobile-tabs instead */
+  .mobile-hide { display: none !important; }
+}

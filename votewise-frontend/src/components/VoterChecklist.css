@@ -1,0 +1,191 @@
+.checklist-empty {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r-md);
+  padding: var(--s10) var(--s8);
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--s4);
+}
+
+.checklist-empty-icon {
+  width: 40px; height: 40px;
+  border-radius: var(--r-md);
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.125rem;
+}
+
+.checklist-empty h3 {
+  font-size: 1rem;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+
+.checklist-empty p {
+  font-size: 0.875rem;
+  color: var(--text-muted);
+  max-width: 320px;
+  line-height: 1.6;
+}
+
+.checklist-error {
+  font-size: 0.8125rem;
+  color: var(--red);
+  padding: var(--s3) var(--s4);
+  background: rgba(239,68,68,0.08);
+  border: 1px solid rgba(239,68,68,0.2);
+  border-radius: var(--r-sm);
+  width: 100%;
+}
+
+/* Container */
+.checklist-container {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r-md);
+  overflow: hidden;
+}
+
+.checklist-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--s4) var(--s5);
+  border-bottom: 1px solid var(--border);
+}
+
+.checklist-title {
+  font-size: 0.9375rem;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+
+.checklist-meta {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  margin-top: 2px;
+}
+
+.checklist-score-badge {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--accent);
+  background: var(--accent-dim);
+  border: 1px solid var(--accent-border);
+  border-radius: var(--r-full);
+  padding: 0.2rem 0.625rem;
+}
+
+.checklist-progress {
+  display: flex;
+  align-items: center;
+  gap: var(--s3);
+  padding: var(--s3) var(--s5);
+  border-bottom: 1px solid var(--border);
+  font-size: 0.75rem;
+  color: var(--text-faint);
+}
+
+.checklist-progress .prog-track { flex: 1; height: 2px; background: var(--surface-3); border-radius: 1px; overflow: hidden; }
+.checklist-progress .prog-fill { height: 100%; background: var(--text); border-radius: 1px; transition: width 0.4s ease; }
+
+/* List */
+.checklist-list { list-style: none; padding: var(--s2); display: flex; flex-direction: column; gap: 1px; }
+
+.checklist-item {
+  border-radius: var(--r-sm);
+  overflow: hidden;
+  transition: background var(--t-fast);
+}
+
+.checklist-item.checked { opacity: 0.55; }
+
+.checklist-row {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--s3);
+  padding: var(--s3) var(--s4);
+}
+
+.check-box {
+  width: 18px; height: 18px;
+  border: 1px solid var(--border-strong);
+  border-radius: 5px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.625rem;
+  font-weight: 700;
+  color: transparent;
+  flex-shrink: 0;
+  margin-top: 2px;
+  transition: all var(--t-fast);
+  background: var(--surface-2);
+}
+
+.check-box.checked {
+  background: var(--text);
+  border-color: var(--text);
+  color: var(--bg);
+}
+
+.checklist-item-content { flex: 1; cursor: pointer; }
+
+.checklist-item-top {
+  display: flex;
+  align-items: center;
+  gap: var(--s2);
+}
+
+.priority-dot {
+  width: 5px; height: 5px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.priority-critical  .priority-dot { background: var(--red); }
+.priority-important .priority-dot { background: var(--saffron); }
+.priority-optional  .priority-dot { background: var(--accent); }
+
+.checklist-item-text {
+  flex: 1;
+  font-size: 0.875rem;
+  font-weight: 450;
+  color: var(--text);
+  line-height: 1.4;
+  letter-spacing: -0.01em;
+}
+
+.done-text { text-decoration: line-through; color: var(--text-faint); }
+
+.expand-btn {
+  font-size: 0.5625rem;
+  color: var(--text-faint);
+  padding: 2px;
+  transition: color var(--t-fast);
+}
+
+.expand-btn:hover { color: var(--text-muted); }
+
+.checklist-detail {
+  padding: var(--s2) 0 0;
+  font-size: 0.8125rem;
+  color: var(--text-muted);
+  line-height: 1.6;
+  border-top: 1px solid var(--border);
+  margin-top: var(--s2);
+}
+
+.checklist-complete {
+  margin: var(--s2);
+  padding: var(--s4);
+  background: var(--accent-dim);
+  border: 1px solid var(--accent-border);
+  border-radius: var(--r-sm);
+  text-align: center;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--accent);
+}

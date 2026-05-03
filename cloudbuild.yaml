@@ -1,0 +1,89 @@
+substitutions:
+  _PROJECT_ID: h2s-promptwars-virtual
+  _REGION: us-central1
+  _BACKEND_SERVICE: votewise-backend
+  _FRONTEND_URL: https://h2s-promptwars-virtual.web.app
+
+steps:
+  # ── Build backend Docker image ────────────────────────────────────
+  - name: 'gcr.io/cloud-builders/docker'
+    id: build-backend
+    args:
+      - build
+      - -t
+      - gcr.io/${_PROJECT_ID}/${_BACKEND_SERVICE}:$COMMIT_SHA
+      - -t
+      - gcr.io/${_PROJECT_ID}/${_BACKEND_SERVICE}:latest
+      - .
+    dir: votewise-backend
+
+  # ── Push to Container Registry ────────────────────────────────────
+  - name: 'gcr.io/cloud-builders/docker'
+    id: push-backend
+    args:
+      - push
+      - --all-tags
+      - gcr.io/${_PROJECT_ID}/${_BACKEND_SERVICE}
+    waitFor: [build-backend]
+
+  # ── Deploy backend to Cloud Run ───────────────────────────────────
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    id: deploy-backend
+    entrypoint: gcloud
+    args:
+      - run
+      - deploy
+      - ${_BACKEND_SERVICE}
+      - --image=gcr.io/${_PROJECT_ID}/${_BACKEND_SERVICE}:$COMMIT_SHA
+      - --region=${_REGION}
+      - --project=${_PROJECT_ID}
+      - --platform=managed
+      - --allow-unauthenticated
+      - --min-instances=0
+      - --max-instances=10
+      - --memory=512Mi
+      - --cpu=1
+      - --set-env-vars=FIREBASE_PROJECT_ID=${_PROJECT_ID},GCP_REGION=${_REGION},GCP_PROJECT_NUMBER=118356874277
+      - --set-env-vars=FRONTEND_URL=${_FRONTEND_URL}
+      - --set-secrets=GEMINI_API_KEY=GEMINI_API_KEY:latest
+    waitFor: [push-backend]
+
+  # ── Build frontend ────────────────────────────────────────────────
+  - name: 'node:20-slim'
+    id: build-frontend
+    entrypoint: bash
+    args:
+      - -c
+      - |
+        cd votewise-frontend
+        npm ci
+        VITE_API_BASE_URL=$(gcloud run services describe ${_BACKEND_SERVICE} \
+          --region=${_REGION} \
+          --project=${_PROJECT_ID} \
+          --format='value(status.url)') \
+        VITE_GCP_PROJECT_ID=${_PROJECT_ID} \
+        VITE_GCP_PROJECT_NUMBER=118356874277 \
+        npm run build
+    waitFor: [deploy-backend]
+
+  # ── Deploy frontend to Firebase Hosting ──────────────────────────
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    id: deploy-frontend
+    entrypoint: bash
+    args:
+      - -c
+      - |
+        npm install -g firebase-tools
+        cd votewise-frontend
+        firebase deploy --only hosting \
+          --project=${_PROJECT_ID} \
+          --non-interactive
+    waitFor: [build-frontend]
+
+images:
+  - 'gcr.io/${_PROJECT_ID}/${_BACKEND_SERVICE}:$COMMIT_SHA'
+  - 'gcr.io/${_PROJECT_ID}/${_BACKEND_SERVICE}:latest'
+
+options:
+  logging: CLOUD_LOGGING_ONLY
+  machineType: E2_HIGHCPU_8
