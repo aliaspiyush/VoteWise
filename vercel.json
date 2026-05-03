@@ -1,0 +1,9 @@
+{
+  "buildCommand": "cd votewise-frontend && npm install && npm run build",
+  "outputDirectory": "votewise-frontend/dist",
+  "installCommand": "echo 'skip root install'",
+  "framework": null,
+  "rewrites": [
+    { "source": "/(.*)", "destination": "/index.html" }
+  ]
+}
